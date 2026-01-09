@@ -458,6 +458,7 @@ EditorManager = {
       DOM.unbind(window, 'ready', initEditors);
       execCallback('onpageload');
 
+      DomQuery.fn.setGlobalContext(settings.global_context || document);
       targets = DomQuery.unique(findTargets(settings));
 
       // TODO: Deprecate this one

@@ -209,7 +209,7 @@ const getElementDocument = function (element) {
     return doc;
   }
 
-  if (element.nodeType === 9) {
+  if (element.nodeType === 9 || element.nodeType === 11) {
     return element;
   }
 
@@ -236,12 +236,29 @@ DomQuery.fn = DomQuery.prototype = {
   context: null,
 
   /**
+   * Context used as a fallback for a context, which normally can't be find inside a shadow root.
+   *
+   * @property context
+   * @type Element
+   */
+  globalContext: null,
+
+  /**
    * Number of items in the current set.
    *
    * @property length
    * @type Number
    */
   length: 0,
+
+  /**
+   * Set the fallback context used when a context can't be found inside a shadow root.
+   *
+   * @param globalContext
+   */
+  setGlobalContext(globalContext) {
+    this.globalContext = globalContext;
+  },
 
   /**
    * Constructs a new DomQuery instance with the specified selector or context.
@@ -273,7 +290,11 @@ DomQuery.fn = DomQuery.prototype = {
         return DomQuery(selector).attr(context);
       }
 
-      self.context = context = document;
+      if (self.globalContext) {
+        self.context = context = self.globalContext;
+      } else {
+        self.context = context = document;
+      }
     }
 
     if (isString(selector)) {
