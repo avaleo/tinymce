@@ -11,7 +11,7 @@
     "url": "https://github.com/tinymce/tinymce/issues"
   },
   "license": "LGPL-2.1",
-  "private": true,
+  "private": false,
   "engines": {
     "node": ">=0.10.26"
   },
