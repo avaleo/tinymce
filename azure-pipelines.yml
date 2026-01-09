@@ -1,0 +1,13 @@
+stages:
+  - stage: release
+    displayName: Release new version
+    jobs:
+      - job: release
+        steps:
+          - task: Npm@1
+            displayName: 'npm publish'
+            inputs:
+              command: publish
+              verbose: false
+              publishRegistry: useFeed
+              publishFeed: 'e89b4a72-5c2a-4039-bc52-89e465ee7e5e'
