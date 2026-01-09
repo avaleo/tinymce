@@ -1,6 +1,20 @@
 TinyMCE - JavaScript Library for Rich Text Editing
 ===================================================
 
+Building TinyMCE for Nexus
+------------------------
+The releasing of a new version of TinyMCE for Nexus must happen on a dev local machine. There's no pipeline that does
+this, because it didn't make sense to have a pipeline for this one-off task.
+
+To release a new version, first follow the steps in "Building TinyMCE" section below to build TinyMCE on your local
+machine. Then perform the following steps to prepare the release:
+
+1. Update the version number in `package.json` to the new version.
+2. Update changelog.txt with the changes made since last release.
+3. Commit the changes to git.
+4. Create a git tag for the new version.
+5. Run `npm publish` command.
+
 Building TinyMCE
 -----------------
 Install [Node.js](https://nodejs.org/en/) on your system.
@@ -21,6 +35,10 @@ Install all package dependencies.
 $ npm install
 ```
 Now, build TinyMCE by using `grunt`.
+```
+$ grunt
+```
+Bundle themes and plugins into a single file TinyMCE by using `grunt`.
 ```
 $ grunt
 ```
@@ -69,31 +87,3 @@ Bundle themes and plugins into a single file
 `grunt bundle --themes=modern --plugins=table,paste`
 
 Minifies the core, adds the modern theme and adds the table and paste plugin into tinymce.min.js.
-
-Contributing to the TinyMCE project
-------------------------------------
-TinyMCE is an open source software project and we encourage developers to contribute patches and code to be included in the main package of TinyMCE.
-
-__Basic Rules__
-
-* Contributed code will be licensed under the LGPL license but not limited to LGPL
-* Copyright notices will be changed to Ephox Corporation, contributors will get credit for their work
-* All third party code will be reviewed, tested and possibly modified before being released
-* All contributors will have to have signed the Contributor License Agreement
-
-These basic rules ensures that the contributed code remains open source and under the LGPL license.
-
-__How to Contribute to the Code__
-
-The TinyMCE source code is [hosted on Github](https://github.com/tinymce/tinymce). Through Github you can submit pull requests and log new bugs and feature requests.
-
-When you submit a pull request, you will get a notice about signing the __Contributors License Agreement (CLA)__.
-You should have a __valid email address on your GitHub account__, and you will be sent a key to verify your identity and digitally sign the agreement.
-
-After you signed your pull request will automatically be ready for review & merge.
-
-__How to Contribute to the Docs__
-
-Docs are hosted on Github in the [tinymce-docs](https://github.com/tinymce/tinymce-docs) repo.
-
-[How to contribute](https://www.tinymce.com/docs/advanced/contributing-docs/) to the docs, including a style guide, can be found on the TinyMCE website.
