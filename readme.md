@@ -3,8 +3,9 @@ TinyMCE - JavaScript Library for Rich Text Editing
 
 Building TinyMCE for Nexus
 ------------------------
-The releasing of a new version of TinyMCE for Nexus must happen on a dev local machine. There's no pipeline that does
-this, because it didn't make sense to have a pipeline for this one-off task.
+The releasing of a new version of TinyMCE for Nexus consists of some manual steps that need to be pushed to the repo and
+then running the pipeline called `Release Avaleo TinyMCE`. The pipeline only runs the `npm publish` command as it must
+be run from the ADO to have access to the npm registry.
 
 To release a new version, first follow the steps in "Building TinyMCE" section below to build TinyMCE on your local
 machine. Then perform the following steps to prepare the release:
@@ -13,7 +14,18 @@ machine. Then perform the following steps to prepare the release:
 2. Update changelog.txt with the changes made since last release.
 3. Commit the changes to git.
 4. Create a git tag for the new version.
-5. Run `npm publish` command.
+
+  ```
+  git tag *.*.*
+  git push origin *.*.*
+  ```
+
+5. Now you can run the pipeline `Release Avaleo TinyMCE` in ADO from the branch `feature/4.9.11-base` to publish the new
+   version to the npm registry.
+
+IMPORTANT
+----------------
+Make sure you run the pipeline from the branch `feature/4.9.11-base` as this is the branch used in Nexus.
 
 Building TinyMCE
 -----------------
@@ -38,11 +50,6 @@ Now, build TinyMCE by using `grunt`.
 ```
 $ grunt
 ```
-Bundle themes and plugins into a single file TinyMCE by using `grunt`.
-```
-$ grunt
-```
-
 
 Build tasks
 ------------
