@@ -1,15 +1,12 @@
 {
-  "name": "tinymce",
+  "name": "@kmd/tinymce",
   "version": "4.10.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tinymce/tinymce.git"
+    "url": "https://github.com/avaleo/tinymce.git"
   },
   "description": "TinyMCE rich text editor",
   "author": "Ephox Corporation",
-  "bugs": {
-    "url": "https://github.com/tinymce/tinymce/issues"
-  },
   "license": "LGPL-2.1",
   "private": false,
   "engines": {
