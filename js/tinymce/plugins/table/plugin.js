@@ -428,30 +428,6 @@ var table = (function (domGlobals) {
 
     var Global = typeof domGlobals.window !== 'undefined' ? domGlobals.window : Function('return this;')();
 
-    var path = function (parts, scope) {
-      var o = scope !== undefined && scope !== null ? scope : Global;
-      for (var i = 0; i < parts.length && o !== undefined && o !== null; ++i) {
-        o = o[parts[i]];
-      }
-      return o;
-    };
-    var resolve = function (p, scope) {
-      var parts = p.split('.');
-      return path(parts, scope);
-    };
-
-    var unsafe = function (name, scope) {
-      return resolve(name, scope);
-    };
-    var getOrDie = function (name, scope) {
-      var actual = unsafe(name, scope);
-      if (actual === undefined || actual === null) {
-        throw new Error(name + ' not available on this browser');
-      }
-      return actual;
-    };
-    var Global$1 = { getOrDie: getOrDie };
-
     var name = function (element) {
       var r = element.dom().nodeName;
       return r.toLowerCase();
@@ -654,22 +630,24 @@ var table = (function (domGlobals) {
       }
     };
 
-    var node = function () {
-      var f = Global$1.getOrDie('Node');
-      return f;
-    };
     var compareDocumentPosition = function (a, b, match) {
       return (a.compareDocumentPosition(b) & match) !== 0;
     };
-    var documentPositionPreceding = function (a, b) {
-      return compareDocumentPosition(a, b, node().DOCUMENT_POSITION_PRECEDING);
-    };
     var documentPositionContainedBy = function (a, b) {
-      return compareDocumentPosition(a, b, node().DOCUMENT_POSITION_CONTAINED_BY);
+      return compareDocumentPosition(a, b, domGlobals.Node.DOCUMENT_POSITION_CONTAINED_BY);
     };
-    var Node = {
-      documentPositionPreceding: documentPositionPreceding,
-      documentPositionContainedBy: documentPositionContainedBy
+
+    var __assign = function () {
+      __assign = Object.assign || function __assign(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+          s = arguments[i];
+          for (var p in s)
+            if (Object.prototype.hasOwnProperty.call(s, p))
+              t[p] = s[p];
+        }
+        return t;
+      };
+      return __assign.apply(this, arguments);
     };
 
     var firstMatch = function (regexes, s) {
@@ -722,11 +700,6 @@ var table = (function (domGlobals) {
     var opera = 'Opera';
     var firefox = 'Firefox';
     var safari = 'Safari';
-    var isBrowser = function (name, current) {
-      return function () {
-        return current === name;
-      };
-    };
     var unknown$1 = function () {
       return nu$1({
         current: undefined,
@@ -736,15 +709,20 @@ var table = (function (domGlobals) {
     var nu$1 = function (info) {
       var current = info.current;
       var version = info.version;
+      var isBrowser = function (name) {
+        return function () {
+          return current === name;
+        };
+      };
       return {
         current: current,
         version: version,
-        isEdge: isBrowser(edge, current),
-        isChrome: isBrowser(chrome, current),
-        isIE: isBrowser(ie, current),
-        isOpera: isBrowser(opera, current),
-        isFirefox: isBrowser(firefox, current),
-        isSafari: isBrowser(safari, current)
+        isEdge: isBrowser(edge),
+        isChrome: isBrowser(chrome),
+        isIE: isBrowser(ie),
+        isOpera: isBrowser(opera),
+        isFirefox: isBrowser(firefox),
+        isSafari: isBrowser(safari)
       };
     };
     var Browser = {
@@ -765,11 +743,7 @@ var table = (function (domGlobals) {
     var osx = 'OSX';
     var solaris = 'Solaris';
     var freebsd = 'FreeBSD';
-    var isOS = function (name, current) {
-      return function () {
-        return current === name;
-      };
-    };
+    var chromeos = 'ChromeOS';
     var unknown$2 = function () {
       return nu$2({
         current: undefined,
@@ -779,16 +753,22 @@ var table = (function (domGlobals) {
     var nu$2 = function (info) {
       var current = info.current;
       var version = info.version;
+      var isOS = function (name) {
+        return function () {
+          return current === name;
+        };
+      };
       return {
         current: current,
         version: version,
-        isWindows: isOS(windows, current),
-        isiOS: isOS(ios, current),
-        isAndroid: isOS(android, current),
-        isOSX: isOS(osx, current),
-        isLinux: isOS(linux, current),
-        isSolaris: isOS(solaris, current),
-        isFreeBSD: isOS(freebsd, current)
+        isWindows: isOS(windows),
+        isiOS: isOS(ios),
+        isAndroid: isOS(android),
+        isOSX: isOS(osx),
+        isLinux: isOS(linux),
+        isSolaris: isOS(solaris),
+        isFreeBSD: isOS(freebsd),
+        isChromeOS: isOS(chromeos)
       };
     };
     var OperatingSystem = {
@@ -800,18 +780,19 @@ var table = (function (domGlobals) {
       linux: constant(linux),
       osx: constant(osx),
       solaris: constant(solaris),
-      freebsd: constant(freebsd)
+      freebsd: constant(freebsd),
+      chromeos: constant(chromeos)
     };
 
-    var DeviceType = function (os, browser, userAgent) {
+    var DeviceType = function (os, browser, userAgent, mediaMatch) {
       var isiPad = os.isiOS() && /ipad/i.test(userAgent) === true;
       var isiPhone = os.isiOS() && !isiPad;
-      var isAndroid3 = os.isAndroid() && os.version.major === 3;
-      var isAndroid4 = os.isAndroid() && os.version.major === 4;
-      var isTablet = isiPad || isAndroid3 || isAndroid4 && /mobile/i.test(userAgent) === true;
-      var isTouch = os.isiOS() || os.isAndroid();
-      var isPhone = isTouch && !isTablet;
+      var isMobile = os.isiOS() || os.isAndroid();
+      var isTouch = isMobile || mediaMatch('(pointer:coarse)');
+      var isTablet = isiPad || !isiPhone && isMobile && mediaMatch('(min-device-width:768px)');
+      var isPhone = isiPhone || isMobile && !isTablet;
       var iOSwebview = browser.isSafari() && os.isiOS() && /safari/i.test(userAgent) === false;
+      var isDesktop = !isPhone && !isTablet && !iOSwebview;
       return {
         isiPad: constant(isiPad),
         isiPhone: constant(isiPhone),
@@ -820,7 +801,8 @@ var table = (function (domGlobals) {
         isTouch: constant(isTouch),
         isAndroid: os.isAndroid,
         isiOS: os.isiOS,
-        isWebView: constant(iOSwebview)
+        isWebView: constant(iOSwebview),
+        isDesktop: constant(isDesktop)
       };
     };
 
@@ -935,8 +917,8 @@ var table = (function (domGlobals) {
       },
       {
         name: 'OSX',
-        search: checkContains('os x'),
-        versionRegexes: [/.*?os\ x\ ?([0-9]+)_([0-9]+).*/]
+        search: checkContains('mac os x'),
+        versionRegexes: [/.*?mac\ os\ x\ ?([0-9]+)_([0-9]+).*/]
       },
       {
         name: 'Linux',
@@ -952,6 +934,11 @@ var table = (function (domGlobals) {
         name: 'FreeBSD',
         search: checkContains('freebsd'),
         versionRegexes: []
+      },
+      {
+        name: 'ChromeOS',
+        search: checkContains('cros'),
+        versionRegexes: [/.*?chrome\/([0-9]+)\.([0-9]+).*/]
       }
     ];
     var PlatformInfo = {
@@ -959,12 +946,12 @@ var table = (function (domGlobals) {
       oses: constant(oses)
     };
 
-    var detect$2 = function (userAgent) {
+    var detect$2 = function (userAgent, mediaMatch) {
       var browsers = PlatformInfo.browsers();
       var oses = PlatformInfo.oses();
       var browser = UaString.detectBrowser(browsers, userAgent).fold(Browser.unknown, Browser.nu);
       var os = UaString.detectOs(oses, userAgent).fold(OperatingSystem.unknown, OperatingSystem.nu);
-      var deviceType = DeviceType(os, browser, userAgent);
+      var deviceType = DeviceType(os, browser, userAgent, mediaMatch);
       return {
         browser: browser,
         os: os,
@@ -973,11 +960,15 @@ var table = (function (domGlobals) {
     };
     var PlatformDetection = { detect: detect$2 };
 
-    var detect$3 = cached(function () {
-      var userAgent = domGlobals.navigator.userAgent;
-      return PlatformDetection.detect(userAgent);
+    var mediaMatch = function (query) {
+      return domGlobals.window.matchMedia(query).matches;
+    };
+    var platform = cached(function () {
+      return PlatformDetection.detect(domGlobals.navigator.userAgent, mediaMatch);
     });
-    var PlatformDetection$1 = { detect: detect$3 };
+    var detect$3 = function () {
+      return platform();
+    };
 
     var ELEMENT$1 = ELEMENT;
     var DOCUMENT$1 = DOCUMENT;
@@ -1021,9 +1012,9 @@ var table = (function (domGlobals) {
       return d1 === d2 ? false : d1.contains(d2);
     };
     var ieContains = function (e1, e2) {
-      return Node.documentPositionContainedBy(e1.dom(), e2.dom());
+      return documentPositionContainedBy(e1.dom(), e2.dom());
     };
-    var browser = PlatformDetection$1.detect().browser;
+    var browser = detect$3().browser;
     var contains$2 = browser.isIE() ? ieContains : regularContains;
     var is$1 = is;
 
@@ -2573,9 +2564,9 @@ var table = (function (domGlobals) {
       return api$2.getOuter(element);
     };
 
-    var platform = PlatformDetection$1.detect();
+    var platform$1 = detect$3();
     var needManualCalc = function () {
-      return platform.browser.isIE() || platform.browser.isEdge();
+      return platform$1.browser.isIE() || platform$1.browser.isEdge();
     };
     var toNumber = function (px, fallback) {
       var num = parseFloat(px);
@@ -2887,19 +2878,6 @@ var table = (function (domGlobals) {
       return warehouse.grid();
     };
     var TableGridSize = { getGridSize: getGridSize };
-
-    var __assign = function () {
-      __assign = Object.assign || function __assign(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-          s = arguments[i];
-          for (var p in s)
-            if (Object.prototype.hasOwnProperty.call(s, p))
-              t[p] = s[p];
-        }
-        return t;
-      };
-      return __assign.apply(this, arguments);
-    };
 
     var cat = function (arr) {
       var r = [];
@@ -8165,7 +8143,7 @@ var table = (function (domGlobals) {
     };
 
     var MAX_RETRIES = 20;
-    var platform$1 = PlatformDetection$1.detect();
+    var platform$2 = detect$3();
     var findSpot = function (bridge, isRoot, direction) {
       return bridge.getSelection().bind(function (sel) {
         return BrTags.tryBr(isRoot, sel.finish(), sel.foffset(), direction).fold(function () {
@@ -8209,9 +8187,9 @@ var table = (function (domGlobals) {
       });
     };
     var tryAt = function (bridge, direction, box) {
-      if (platform$1.browser.isChrome() || platform$1.browser.isSafari() || platform$1.browser.isFirefox() || platform$1.browser.isEdge()) {
+      if (platform$2.browser.isChrome() || platform$2.browser.isSafari() || platform$2.browser.isFirefox() || platform$2.browser.isEdge()) {
         return direction.otherRetry(bridge, box);
-      } else if (platform$1.browser.isIE()) {
+      } else if (platform$2.browser.isIE()) {
         return direction.ieRetry(bridge, box);
       } else {
         return Option.none();
@@ -8229,7 +8207,7 @@ var table = (function (domGlobals) {
     };
     var TableKeys = { handle: handle$2 };
 
-    var detection = PlatformDetection$1.detect();
+    var detection = detect$3();
     var inSameTable = function (elem, table) {
       return ancestor$2(elem, function (e) {
         return parent(e).exists(function (p) {
@@ -8405,7 +8383,7 @@ var table = (function (domGlobals) {
     };
     var Rect = { toRaw: toRaw };
 
-    var isSafari = PlatformDetection$1.detect().browser.isSafari();
+    var isSafari = detect$3().browser.isSafari();
     var get$a = function (_DOC) {
       var doc = _DOC !== undefined ? _DOC.dom() : domGlobals.document;
       var x = doc.body.scrollLeft || doc.documentElement.scrollLeft;

@@ -1,4 +1,4 @@
-// 4.9.11 (2020-07-13)
+// 4.10.1 (2026-01-09)
 (function () {
 (function (domGlobals) {
     'use strict';
@@ -26389,8 +26389,8 @@
       defaultSettings: {},
       $: DomQuery,
       majorVersion: '4',
-      minorVersion: '9.11',
-      releaseDate: '2020-07-13',
+      minorVersion: '10.1',
+      releaseDate: '2026-01-09',
       editors: legacyEditors,
       i18n: I18n,
       activeEditor: null,
