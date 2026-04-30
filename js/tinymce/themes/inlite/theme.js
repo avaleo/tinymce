@@ -764,6 +764,8 @@ var inlite = (function (domGlobals) {
       return nativeSlice.call(x);
     };
 
+    var global$7 = tinymce.util.Tools.resolve('tinymce.dom.DomQuery');
+
     var count = 0;
     var funcs = {
       id: function () {
@@ -808,7 +810,7 @@ var inlite = (function (domGlobals) {
         return global$2.DOM.getPos(elm, root || funcs.getContainer());
       },
       getContainer: function () {
-        return global$1.container ? global$1.container : domGlobals.document.body;
+        return global$1.container ? global$1.container : global$7.fn.globalContext ? global$7.fn.globalContext : domGlobals.document.body;
       },
       getViewPort: function (win) {
         return global$2.DOM.getViewPort(win);
@@ -847,8 +849,6 @@ var inlite = (function (domGlobals) {
         global$2.DOM.setHTML(elm, html);
       }
     };
-
-    var global$7 = tinymce.util.Tools.resolve('tinymce.dom.DomQuery');
 
     var global$8 = tinymce.util.Tools.resolve('tinymce.util.Class');
 

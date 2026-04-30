@@ -53,9 +53,8 @@ const isWindow = function (obj) {
 const createFragment = function (html, fragDoc) {
   let frag, node, container;
 
-  fragDoc = fragDoc || doc;
-  container = fragDoc.createElement('div');
-  frag = fragDoc.createDocumentFragment();
+  container = doc.createElement('div');
+  frag = doc.createDocumentFragment();
   container.innerHTML = html;
 
   while ((node = container.firstChild)) {

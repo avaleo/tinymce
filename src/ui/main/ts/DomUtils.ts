@@ -10,6 +10,7 @@ import Env from 'tinymce/core/api/Env';
 import Tools from 'tinymce/core/api/util/Tools';
 import { GeomRect } from 'tinymce/core/api/geom/Rect';
 import { document, DocumentFragment, HTMLElement } from '@ephox/dom-globals';
+import DomQuery from "tinymce/core/api/dom/DomQuery";
 
 /**
  * Private UI DomUtils proxy.
@@ -72,7 +73,7 @@ const funcs = {
   },
 
   getContainer () {
-    return Env.container ? Env.container : document.body;
+    return Env.container ? Env.container : (DomQuery.fn.globalContext ? DomQuery.fn.globalContext : document.body);
   },
 
   getViewPort (win?) {

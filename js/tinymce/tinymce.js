@@ -1,4 +1,4 @@
-// 4.10.1 (2026-01-09)
+// 4.10.2 (2026-03-16)
 (function () {
 (function (domGlobals) {
     'use strict';
@@ -2367,9 +2367,8 @@
     };
     var createFragment = function (html, fragDoc) {
       var frag, node, container;
-      fragDoc = fragDoc || doc;
-      container = fragDoc.createElement('div');
-      frag = fragDoc.createDocumentFragment();
+      container = doc.createElement('div');
+      frag = doc.createDocumentFragment();
       container.innerHTML = html;
       while (node = container.firstChild) {
         frag.appendChild(node);
@@ -6336,8 +6335,8 @@
       var blockElementsMap = schema.getBlockElements();
       var $ = DomQuery.overrideDefaults(function () {
         return {
-          context: doc,
-          element: self.getRoot()
+          context: DomQuery.fn.globalContext != null ? DomQuery.fn.globalContext : doc,
+          element: DomQuery.fn.globalContext != null ? DomQuery.fn.globalContext : self.getRoot()
         };
       });
       var isBlock = function (node) {
@@ -26389,8 +26388,8 @@
       defaultSettings: {},
       $: DomQuery,
       majorVersion: '4',
-      minorVersion: '10.1',
-      releaseDate: '2026-01-09',
+      minorVersion: '10.2',
+      releaseDate: '2026-03-16',
       editors: legacyEditors,
       i18n: I18n,
       activeEditor: null,
@@ -26459,6 +26458,7 @@
       init: function (settings) {
         var self = this;
         var result, invalidInlineTargets;
+        DomQuery.fn.setGlobalContext(settings.global_context || domGlobals.document);
         invalidInlineTargets = Tools.makeMap('area base basefont br col frame hr img input isindex link meta param embed source wbr track ' + 'colgroup option tbody tfoot thead tr script noscript style textarea video audio iframe object menu', ' ');
         var isInvalidInlineTarget = function (settings, elm) {
           return settings.inline && elm.tagName.toLowerCase() in invalidInlineTargets;
@@ -26558,7 +26558,6 @@
           };
           DOM$9.unbind(window, 'ready', initEditors);
           execCallback('onpageload');
-          DomQuery.fn.setGlobalContext(settings.global_context || domGlobals.document);
           targets = DomQuery.unique(findTargets(settings));
           if (settings.types) {
             each$m(settings.types, function (type) {

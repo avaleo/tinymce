@@ -1206,7 +1206,7 @@ var modern = (function (domGlobals) {
         return global$3.DOM.getPos(elm, root || funcs.getContainer());
       },
       getContainer: function () {
-        return global$8.container ? global$8.container : domGlobals.document.body;
+        return global$8.container ? global$8.container : global$9.fn.globalContext ? global$9.fn.globalContext : domGlobals.document.body;
       },
       getViewPort: function (win) {
         return global$3.DOM.getViewPort(win);

@@ -256,8 +256,8 @@ export function DOMUtils(doc: Document, settings: Partial<DOMUtilsSettings> = {}
 
   const $ = DomQuery.overrideDefaults(function () {
     return {
-      context: doc,
-      element: self.getRoot()
+      context: DomQuery.fn.globalContext != null ? DomQuery.fn.globalContext : doc,
+      element: DomQuery.fn.globalContext != null ? DomQuery.fn.globalContext : self.getRoot()
     };
   });
 

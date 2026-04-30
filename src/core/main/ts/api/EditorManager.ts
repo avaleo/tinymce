@@ -321,6 +321,8 @@ EditorManager = {
     const self = this;
     let result, invalidInlineTargets;
 
+    DomQuery.fn.setGlobalContext(settings.global_context || document);
+
     invalidInlineTargets = Tools.makeMap(
       'area base basefont br col frame hr img input isindex link meta param embed source wbr track ' +
       'colgroup option tbody tfoot thead tr script noscript style textarea video audio iframe object menu',
@@ -458,7 +460,6 @@ EditorManager = {
       DOM.unbind(window, 'ready', initEditors);
       execCallback('onpageload');
 
-      DomQuery.fn.setGlobalContext(settings.global_context || document);
       targets = DomQuery.unique(findTargets(settings));
 
       // TODO: Deprecate this one
