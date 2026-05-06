@@ -7,20 +7,20 @@ The releasing of a new version of TinyMCE for Nexus consists of some manual step
 then running the pipeline called `Release Avaleo TinyMCE`. The pipeline only runs the `npm publish` command as it must
 be run from the ADO to have access to the npm registry.
 
-To release a new version, first follow the steps in "Building TinyMCE" section below to build TinyMCE on your local
-machine. Then perform the following steps to prepare the release:
+When you apply your changes, perform the following steps to prepare the release:
 
-1. Update the version number in `package.json` to the new version.
+1. Update the version number in `package.json` and `package-lock.json` to the new version.
 2. Update changelog.txt with the changes made since last release.
-3. Commit the changes to git.
-4. Create a git tag for the new version.
+3. Build TinyMCE by using `grunt --force`.
+4. Commit the changes to git.
+5. Create a git tag for the new version.
 
   ```
   git tag *.*.*
   git push origin *.*.*
   ```
 
-5. Now you can run the pipeline `Release Avaleo TinyMCE` in ADO from the branch `feature/4.9.11-base` to publish the new
+6. Now you can run the pipeline `Release Avaleo TinyMCE` in ADO from the branch `feature/4.9.11-base` to publish the new
    version to the npm registry.
 
 IMPORTANT
@@ -49,6 +49,12 @@ $ npm install
 Now, build TinyMCE by using `grunt`.
 ```
 $ grunt
+```
+
+You may need to use the `--force` flag if you have warnings in the build process.
+
+```
+$ grunt --force
 ```
 
 Build tasks

@@ -1,4 +1,4 @@
-// 4.10.2 (2026-03-16)
+// 4.10.4 (2026-05-06)
 (function () {
 (function (domGlobals) {
     'use strict';
@@ -422,7 +422,7 @@
       cacheSuffix: null,
       container: null,
       overrideViewPort: null,
-      experimentalShadowDom: false,
+      experimentalShadowDom: true,
       canHaveCSP: ie === false || ie > 11,
       desktop: !phone && !tablet,
       windowsPhone: windowsPhone
@@ -26388,8 +26388,8 @@
       defaultSettings: {},
       $: DomQuery,
       majorVersion: '4',
-      minorVersion: '10.2',
-      releaseDate: '2026-03-16',
+      minorVersion: '10.4',
+      releaseDate: '2026-05-06',
       editors: legacyEditors,
       i18n: I18n,
       activeEditor: null,

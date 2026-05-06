@@ -174,7 +174,7 @@ export default {
   cacheSuffix: null,
   container: null,
   overrideViewPort: null,
-  experimentalShadowDom: false,
+  experimentalShadowDom: true,
 
   /**
    * Constant if CSP mode is possible or not. Meaning we can't use script urls for the iframe.
